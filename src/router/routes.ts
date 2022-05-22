@@ -1,4 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
+import { nodeSchema, nodeData } from '../stores/raw_data';
+import { ref } from 'vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -9,7 +11,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'node',
         component: () => import('src/components/OculusNode.vue'),
-        props: { title: 'Node' },
+        props: { nodeSchema: nodeSchema, nodeData: nodeData },
       },
       {
         path: 'interface',

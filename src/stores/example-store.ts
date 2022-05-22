@@ -13,3 +13,18 @@ export const useCounterStore = defineStore('counter', {
     },
   },
 });
+
+export const nodeStore = defineStore('nodeStore', {
+  state: () => ({
+    nodesArray: [] as string[]
+  }),
+  getters: {
+    getNodesArray: (state) => state.nodesArray
+  },
+  actions: {
+    updateNodesArray(nodesArray: Array<string>) {
+      this.nodesArray = nodesArray;
+    },
+  },
+});
+
