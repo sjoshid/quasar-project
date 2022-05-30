@@ -1,33 +1,11 @@
 <template>
-  <div class="row-grow justify-left">
-    <div class="q-pa-md self-center">
-      <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-        <q-input
-          filled
-          v-model="name"
-          label="Node caption"
-          hint="Search available nodes"
-          autofocus
-          clearable
-          :dense="true"
-          lazy-rules="ondemand"
-          :rules="[(val) => (val && val.length > 0) || 'Please type something']"
-        >
-          <template v-slot:append>
-            <q-icon v-if="true" name="search" />
-          </template>
-        </q-input>
-      </q-form>
-    </div>
-  </div>
-
   <div class="fit column no-wrap justify-start items-stretch content-start">
     <div class="overflow: auto;">
       <div class="q-pa-md">
         <q-table
-          title="Nodes"
-          :rows="nodeData"
-          :columns="nodeSchema"
+          :title="title"
+          :rows="d"
+          :columns="s"
           row-key="name"
         >
           <!-- The word "action" below is the field name in columns. Magic!! -->
@@ -36,7 +14,7 @@
               <q-btn icon="analytics">
                 <q-tooltip class="bg-accent">Show metrics</q-tooltip>
               </q-btn>
-              <!-- error_outline means node is not shown in Oculus -->
+              <!-- error_outline means something is not shown in Oculus -->
               <q-btn icon="error_outline" />
               <q-btn icon="dataset">
                 <q-tooltip class="bg-accent"
@@ -53,47 +31,79 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
-const schema = ref([''])
-const data = ref([''])
+import { defineComponent, reactive } from 'vue';
+import {nodeSchema, nodeData} from '../stores/raw_data'
+import {nodeSchema as interfaceSchema, nodeData as interfaceData} from '../stores/raw_interface'
+
+type Schema = {
+  name: string;
+  field: string;
+  label: string;
+}[];
+
+type NodeData = {
+  nodeId: string;
+  nType: number;
+  division: number;
+  acna: number;
+  sponsoredBy: number;
+  caption: string;
+}[];
+
+type InterfaceData = {
+  interfaceId: string;
+  nType: number;
+  division: number;
+  acna: number;
+  sponsoredBy: number;
+  caption: string;
+}[];
 
 export default defineComponent({
-  name: 'OculusNode',
+  name: 'OculusComponent',
   props: {
-    nodeSchema: Array as PropType<
-      {
-        name: string;
-        field: string;
-        label: string;
-      }[]
-    >,
-    // types is messed up. division cannot be a number. But this is ok for now.
-    nodeData: Array as PropType<
-      {
-        nodeId: string;
-        nType: number;
-        division: number;
-        acna: number;
-        sponsoredBy: number;
-        caption: string;
-      }[]
-    >,
+    title: { type: String, required: true },
+    url: { type: String, required: true },
+    criteria: {},
   },
-  mounted() {
-    console.log('mounted! ' + schema.value);
+  created: () => {
+    console.log('created');
   },
-  updated() {
-    console.log('updated!');
+  updated: () => {
+    console.log('updated');
   },
   setup(props) {
-    const update = (node_ids: string | readonly string[]) => {
-      // use node_ids and make a REST call and get all nodes.
-      console.log('called update with ' + node_ids);
+    // type of schema and data will vary based on props.url.
+    let d: NodeData | InterfaceData = []
+    let s: Schema = []
+    switch (props.url) {
+      case ('/node'): {
+        s = nodeSchema
+        d = reactive(nodeData)
+      }
+      break
+      case ('/interface'): {
+        s = interfaceSchema
+        d = reactive(interfaceData)
+      }
+      break
+      default: {
+
+      }
+    }
+    
+    const update = (criteria_ids: string | readonly string[]) => {
+      // use criteria_ids and make a REST call and get all records.
+      console.log('called update with criteria ' + criteria_ids);
+      console.log(props.url);
+      d.splice(0);
+      console.log(d);
     };
-    let someLabel = '';
+
     return {
       update,
-      someLabel,
+      d,
+      s, // no need to make schema reactive
     };
   },
 });

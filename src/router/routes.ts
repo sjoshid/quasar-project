@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import { nodeSchema, nodeData } from '../stores/raw_data';
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -10,8 +10,7 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/IndexPage.vue') },
       {
         path: 'node',
-        component: () => import('src/components/OculusNode.vue'),
-        props: { nodeSchema: nodeSchema, nodeData: nodeData },
+        component: () => import('src/components/OTable.vue'),
       },
       {
         path: 'interface',
