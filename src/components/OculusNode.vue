@@ -2,12 +2,7 @@
   <div class="fit column no-wrap justify-start items-stretch content-start">
     <div class="overflow: auto;">
       <div class="q-pa-md">
-        <q-table
-          :title="title"
-          :rows="d"
-          :columns="s"
-          row-key="name"
-        >
+        <q-table :title="title" :rows="d" :columns="s" row-key="name">
           <!-- The word "action" below is the field name in columns. Magic!! -->
           <template #body-cell-action="props">
             <q-td :props="props">
@@ -32,8 +27,11 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
-import {nodeSchema, nodeData} from '../stores/raw_data'
-import {nodeSchema as interfaceSchema, nodeData as interfaceData} from '../stores/raw_interface'
+import { nodeSchema, nodeData } from '../stores/raw_data';
+import {
+  nodeSchema as interfaceSchema,
+  nodeData as interfaceData,
+} from '../stores/raw_interface';
 
 type Schema = {
   name: string;
@@ -74,24 +72,25 @@ export default defineComponent({
   },
   setup(props) {
     // type of schema and data will vary based on props.url.
-    let d: NodeData | InterfaceData = []
-    let s: Schema = []
+    let d: NodeData | InterfaceData = [];
+    let s: Schema = [];
     switch (props.url) {
-      case ('/node'): {
-        s = nodeSchema
-        d = reactive(nodeData)
-      }
-      break
-      case ('/interface'): {
-        s = interfaceSchema
-        d = reactive(interfaceData)
-      }
-      break
+      case '/node':
+        {
+          s = nodeSchema;
+          d = reactive(nodeData);
+        }
+        break;
+      case '/interface':
+        {
+          s = interfaceSchema;
+          d = reactive(interfaceData);
+        }
+        break;
       default: {
-
       }
     }
-    
+
     const update = (criteria_ids: string | readonly string[]) => {
       // use criteria_ids and make a REST call and get all records.
       console.log('called update with criteria ' + criteria_ids);
